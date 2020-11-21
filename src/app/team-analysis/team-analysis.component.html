@@ -1,0 +1,29 @@
+<h3 class="text-center">{{selectedTeam}}</h3>
+<div class="row">
+    <div *ngFor= "let match of matchesData" class="col-6 text-center">
+        <p 
+            [ngClass]="{'text-success': match.info.outcome.winner === selectedTeam, 'text-danger': match.info.outcome.winner !== selectedTeam}">
+            {{match.info.teams[0]}} vs {{match.info.teams[1]}}
+        </p>
+        <p>{{match.info.dates[0]}}</p>
+        <p>{{match.info.player_of_match[0]}}</p>
+        <p>{{match.info.venue}}</p>
+        <p>{{match.innings[0]["1st innings"].team}}</p>
+        <p>{{match.innings[1]["2nd innings"].team}}</p>
+        <div class="row">
+            <div class="col-6">
+                <h5 class="text-center">1st innings</h5>
+                <div *ngFor="let delivery of match.innings[0]['1st innings'].deliveries">
+                    {{formatDelivery(delivery)}}
+                </div>
+            </div>
+
+            <div class="col-6">
+                <h5 class="text-center">2nd innings</h5>
+                <div *ngFor="let delivery of match.innings[1]['2nd innings'].deliveries">
+                    {{formatDelivery(delivery)}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
