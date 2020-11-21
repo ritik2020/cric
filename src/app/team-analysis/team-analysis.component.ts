@@ -23,4 +23,8 @@ export class TeamAnalysisComponent implements OnInit {
   findBowlers(startOver, endOver){
     console.log(this.matchesData);
   }
+
+  saksham(){
+    // 
+  }
 }
