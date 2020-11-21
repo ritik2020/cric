@@ -27,4 +27,8 @@ export class TeamAnalysisComponent implements OnInit {
   saksham(){
     // 
   }
+
+  ritik(){
+    //
+  }
 }
