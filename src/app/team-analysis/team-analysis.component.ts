@@ -31,4 +31,6 @@ export class TeamAnalysisComponent implements OnInit {
   ritik(){
     //
   }
+
+  //dfgdgdfgdfgdfgdfgdfg
 }
