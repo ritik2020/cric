@@ -19,19 +19,4 @@ export class TeamAnalysisComponent implements OnInit {
     return `${d} ${delivery[d].batsman} - ${delivery[d].non_striker}
     ${delivery[d].bowler}`
   }
-
-  findBowlers(startOver, endOver){
-    console.log(this.matchesData);
-  }
-
-  saksham(){
-    // 
-  }
-
-  ritik(){
-    //
-    var x = 3;
-  }
-
-  //dfgdgdfgdfgdfgdfgdfg
 }
