@@ -7,11 +7,12 @@ import { Component, OnInit, Input} from '@angular/core';
 })
 export class TeamAnalysisComponent implements OnInit {
   @Input('matchesData') matchesData;
-  @Input('selectedTeam') selectedTeam;
+  @Input('selectedTeam') selectedTeam:string;
+  wicketData;
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.matchesData);
+    this.wicketData = this.wicketDetails(3,2);
   }
 
   formatDelivery(delivery){
@@ -20,11 +21,47 @@ export class TeamAnalysisComponent implements OnInit {
     ${delivery[d].bowler}`
   }
 
-  rohan(){
-    //
+
+  ballToOver(delivery:number):string{
+    let overNo,ballNo;
+    if(delivery%6==0){
+       overNo=Math.floor(delivery/6)-1;
+       ballNo=6;
+    }
+    else{
+      overNo=Math.floor(delivery/6);
+      ballNo=delivery%6;
+    }
+
+    overNo = String(overNo);
+    ballNo = String(ballNo);
+    
+    return `${overNo}.${ballNo}`;
   }
 
-  ritik(){
-    //
+  wicketDetails(match, inning){
+    var deliveries;
+    if(inning===1){
+      deliveries = this.matchesData[match-1].innings[inning-1]["1st innings"].deliveries;
+    }
+    if(inning===2){
+      deliveries = this.matchesData[match-1].innings[inning-1]["2nd innings"].deliveries;
+    }
+    var res = [];
+    for(let i=0; i<deliveries.length; i++){
+      let d = Object.keys(deliveries[i])[0];
+      let deliveryData =deliveries[i][d];
+      if(deliveryData["wicket"]!=undefined){
+        let data = {
+          delivery: d,
+          batsman: deliveryData["wicket"]["player_out"],
+          kind: deliveryData["wicket"]["kind"],
+          bowler: deliveryData.bowler
+        }
+        res.push(data);
+      }
+    }
+    return res;
   }
+  
 }
