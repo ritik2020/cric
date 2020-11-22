@@ -12,7 +12,8 @@ export class TeamAnalysisComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.wicketData = this.wicketDetails(3,2);
+    this.wicketData = this.wicketsDetailOfAMatch(3,2);
+    this.wicketDetailsOfAllMatch();
   }
 
   formatDelivery(delivery){
@@ -21,25 +22,20 @@ export class TeamAnalysisComponent implements OnInit {
     ${delivery[d].bowler}`
   }
 
-
-  ballToOver(delivery:number):string{
-    let overNo,ballNo;
-    if(delivery%6==0){
-       overNo=Math.floor(delivery/6)-1;
-       ballNo=6;
+  wicketDetailsOfAllMatch(){
+    let res = [];
+    for(let i=0; i<this.matchesData.length; i++){
+      if(this.matchesData[i].innings[0]["1st innings"].team === this.selectedTeam){
+        res.push(this.wicketsDetailOfAMatch(i+1,1));
+      }
+      if(this.matchesData[i].innings[1]["2nd innings"].team === this.selectedTeam){
+        res.push(this.wicketsDetailOfAMatch(i+1,2));
+      }
     }
-    else{
-      overNo=Math.floor(delivery/6);
-      ballNo=delivery%6;
-    }
-
-    overNo = String(overNo);
-    ballNo = String(ballNo);
-    
-    return `${overNo}.${ballNo}`;
+    console.log(res);
   }
-
-  wicketDetails(match, inning){
+  
+  wicketsDetailOfAMatch(match, inning){
     var deliveries;
     if(inning===1){
       deliveries = this.matchesData[match-1].innings[inning-1]["1st innings"].deliveries;
