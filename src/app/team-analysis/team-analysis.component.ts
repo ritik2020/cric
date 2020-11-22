@@ -23,4 +23,8 @@ export class TeamAnalysisComponent implements OnInit {
   rohan(){
     //
   }
+
+  ritik(){
+    //
+  }
 }
