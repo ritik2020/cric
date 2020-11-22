@@ -19,4 +19,8 @@ export class TeamAnalysisComponent implements OnInit {
     return `${d} ${delivery[d].batsman} - ${delivery[d].non_striker}
     ${delivery[d].bowler}`
   }
+
+  rohan(){
+    //
+  }
 }
