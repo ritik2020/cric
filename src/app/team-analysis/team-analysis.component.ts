@@ -13,7 +13,8 @@ export class TeamAnalysisComponent implements OnInit {
 
   ngOnInit(): void {
     this.wicketData = this.wicketsDetailOfAMatch(3);
-    this.battingOrderOfAMatch(0);
+    console.log(this.battingOrderOfAllMatches());
+
   }
 
   formatDelivery(delivery){
@@ -60,37 +61,65 @@ export class TeamAnalysisComponent implements OnInit {
     }
     return res;
   }
-  
-  battingOrderOfAMatch(match){
-    let wicketsData = this.wicketsDetailOfAMatch(match);
-    let wicketDeliveries = [];
+
+  battingOrderOfAllMatches(){
     let res = [];
-    wicketsData.forEach(wicket=>{
-      wicketDeliveries.push(wicket.delivery);
-    });
+    for(let i=0; i<this.matchesData.length;i++){
+      res.push(this.battingOrderOfAMatch(i));
+    }
+    return res;
+  }
+  
 
-    let openers = this.getDeliveryData(match,this.getBattingInnings(match),"0.1");
-    let visitedBatsman = [];
-    res.push({batsman: openers.batsman, over:"0.1"});
-    visitedBatsman.push(openers.batsman);
-    res.push({batsman: openers.non_striker, over:"0.1"});
-    visitedBatsman.push(openers.non_striker);
+  battingOrderOfAMatch(match){
+    let matchData = this.matchesData[match];
+    let battingInning  =  this.getBattingInnings(match);
 
-    for(let i=0; i<wicketDeliveries.length; i++){
-      let d = (Number(wicketDeliveries[i])+0.1).toFixed(1);
-      let deliveryData= this.getDeliveryData(match,this.getBattingInnings(match),d);
-      if(!visitedBatsman.includes(deliveryData.batsman)){
-        res.push({batsman: deliveryData.batsman, over: d});
-        visitedBatsman.push(deliveryData.batsman);
+    let deliveries;
+    if(battingInning===0){
+      deliveries = matchData.innings[0]["1st innings"].deliveries;
+    }
+    else{
+      deliveries = matchData.innings[1]["2nd innings"].deliveries;
+    }
+    let res = [];
+    let set = new Set();
+
+    for(let i=0; i<deliveries.length; i++)
+    {
+      let d = Object.keys(deliveries[i])[0];
+      if(i===0){
+        
+        let deliveryData = deliveries[i][d];
+        res.push({batsman:deliveryData.batsman,over:d});
+        set.add(deliveryData.batsman);
+        res.push({batsman:deliveryData.non_striker,over:d});
+        set.add(deliveryData.non_striker);
+        continue;
       }
-      else{
-        res.push({batsman: deliveryData.non_striker, over: d});
-        visitedBatsman.push(deliveryData.non_striker);
+      if(deliveries[i][d].wicket!==undefined){
+        if(i===deliveries.length-1){
+        
+          break;
+        }
+        
+        let nextDelivery = deliveries[i+1][Object.keys(deliveries[i+1])[0]];
+        if(!set.has(nextDelivery.batsman)){
+          res.push({batsman:nextDelivery.batsman,over:Object.keys(deliveries[i+1])[0]});
+          set.add(nextDelivery.batsman);
+        }
+        else{
+          res.push({batsman:nextDelivery.non_striker,over:Object.keys(deliveries[i+1])[0]});
+          set.add(nextDelivery.non_striker);
+        }
+        
+
       }
     }
-
-    console.log(res);
+    return res;
   }
+
+
 
   getDate(match){
     return this.matchesData[match].info.dates[0];
