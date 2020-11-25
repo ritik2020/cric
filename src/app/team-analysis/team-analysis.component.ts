@@ -14,11 +14,8 @@ export class TeamAnalysisComponent implements OnInit {
   inningsNameArray = ["1st innings","2nd innings"];
   ngOnInit(): void {
     this.battingOrder = this.battingOrderOfAllMatches();
-    // console.log(this.runScoredByBatsman("NCR Larkin",0));
-    // console.log(this.runScoredByBatsmenInAMatch(0));
-    // console.log(this.runsScoredByBatsmenInAllMatches());
-    // console.log(this.wicketsTakenByBowler("JM Bird",0));
-    console.log(this.wicketsDetailOfAMatch(0));
+    // console.log(this.wicketTakenByAllBowlersInAMatch(0));
+    // console.log(this.matchesData[5]);
   }
 
 
@@ -67,8 +64,11 @@ export class TeamAnalysisComponent implements OnInit {
 
   battingOrderOfAMatch(match){
     let matchData = this.matchesData[match];
+    let res = [];
     let battingInning  =  this.getBattingInnings(match);
-
+    if(battingInning===-1){
+      return [];
+    }
     let deliveries;
     if(battingInning===0){
       deliveries = matchData.innings[0]["1st innings"].deliveries;
@@ -76,7 +76,7 @@ export class TeamAnalysisComponent implements OnInit {
     else{
       deliveries = matchData.innings[1]["2nd innings"].deliveries;
     }
-    let res = [];
+    
     let set = new Set();
 
     for(let i=0; i<deliveries.length; i++)
@@ -142,21 +142,40 @@ export class TeamAnalysisComponent implements OnInit {
   }
 
   getBattingInnings(match){
-    if(this.matchesData[match].innings[0]["1st innings"].team === this.selectedTeam){
-      return 0;
-    }
-    else{
-      return 1;
+    let inningsLength = this.matchesData[match].innings.length;
+    if(inningsLength===0){
+      return -1;
     }
 
-  }
-  getBowlingInnings(match){
     if(this.matchesData[match].innings[0]["1st innings"].team === this.selectedTeam){
-      return 1;
-    }
-    else{
       return 0;
     }
+
+    if(inningsLength===1){
+      return -1;
+    }
+
+    
+    return 1;
+    
+  }
+
+  getBowlingInnings(match){
+    let inningsLength = this.matchesData[match].innings.length;
+    if(inningsLength===0){
+      return -1;
+    }
+
+    if(this.matchesData[match].innings[0]["1st innings"].team !==this.selectedTeam){
+      return 0;
+    }
+
+    if(inningsLength===1){
+      return -1;
+    }
+
+    return 1;
+    
   }
 
 
@@ -231,8 +250,21 @@ export class TeamAnalysisComponent implements OnInit {
   }
   
   wicketTakenByAllBowlersInAMatch(match){
-    let m = this.matchesData[match];
+    let wicketData = this.wicketsDetailOfAMatch(match);
+    let res = new Map();
+    for(let i=0; i<wicketData.length; i++){
+      if(wicketData[i].kind!="run out"){
+        if(res.has(wicketData[i].bowler)){
+          let currentWkt = res.get(wicketData[i].bowler);
+          res.set(wicketData[i].bowler,currentWkt+1);
+        } 
+        else {
+          res.set(wicketData[i].bowler, 1);
+        }
+      }
+    }
 
+    return res;
   }
 
 }
