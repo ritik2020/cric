@@ -11,11 +11,14 @@ export class TeamAnalysisComponent implements OnInit {
   battingOrder;
   constructor() { }
 
+  inningsNameArray = ["1st innings","2nd innings"];
   ngOnInit(): void {
     this.battingOrder = this.battingOrderOfAllMatches();
     // console.log(this.runScoredByBatsman("NCR Larkin",0));
     // console.log(this.runScoredByBatsmenInAMatch(0));
-    console.log(this.runsScoredByBatsmenInAllMatches());
+    // console.log(this.runsScoredByBatsmenInAllMatches());
+    // console.log(this.wicketsTakenByBowler("JM Bird",0));
+    console.log(this.wicketsDetailOfAMatch(0));
   }
 
 
@@ -33,14 +36,9 @@ export class TeamAnalysisComponent implements OnInit {
   }
   
   wicketsDetailOfAMatch(match){
-    let inning = this.getBattingInnings(match);
-    var deliveries;
-    if(inning===0){
-      deliveries = this.matchesData[match].innings[inning]["1st innings"].deliveries;
-    }
-    if(inning===1){
-      deliveries = this.matchesData[match].innings[inning]["2nd innings"].deliveries;
-    }
+    let inning = this.getBowlingInnings(match);
+    var deliveries = this.matchesData[match].innings[inning][this.inningsNameArray[inning]].deliveries;
+  
     var res = [];
     for(let i=0; i<deliveries.length; i++){
       let d = Object.keys(deliveries[i])[0];
@@ -150,7 +148,17 @@ export class TeamAnalysisComponent implements OnInit {
     else{
       return 1;
     }
+
   }
+  getBowlingInnings(match){
+    if(this.matchesData[match].innings[0]["1st innings"].team === this.selectedTeam){
+      return 1;
+    }
+    else{
+      return 0;
+    }
+  }
+
 
   getDeliveryData(match,inning,delivery){
     let deliveries;
@@ -205,4 +213,27 @@ export class TeamAnalysisComponent implements OnInit {
     }
     return res;
   }
+  
+  wicketsTakenByBowler(bowler,match){
+    let m = this.matchesData[match];
+    let inn = this.getBowlingInnings(match);
+    let wicket = 0;
+    let deliveries = m.innings[inn][this.inningsNameArray[inn]].deliveries;
+    for(let i=0;i<deliveries.length;i++){
+      let d = Object.keys(deliveries[i])[0];
+      if(deliveries[i][d].wicket!==undefined){
+        if(deliveries[i][d].wicket.kind!=="run out" && deliveries[i][d].bowler==bowler){
+          wicket++;
+        }
+      }
+    }
+    return wicket;
+  }
+  
+  wicketTakenByAllBowlersInAMatch(match){
+    let m = this.matchesData[match];
+
+  }
+
 }
+  
