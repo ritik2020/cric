@@ -8,20 +8,13 @@ import { Component, OnInit, Input} from '@angular/core';
 export class TeamAnalysisComponent implements OnInit {
   @Input('matchesData') matchesData;
   @Input('selectedTeam') selectedTeam:string;
-  wicketData;
+  battingOrder;
   constructor() { }
 
   ngOnInit(): void {
-    this.wicketData = this.wicketsDetailOfAMatch(3);
-    console.log(this.battingOrderOfAllMatches());
-
+    this.battingOrder = this.battingOrderOfAllMatches();
   }
 
-  formatDelivery(delivery){
-    var d = Object.keys(delivery)[0];
-    return `${d} ${delivery[d].batsman} - ${delivery[d].non_striker}
-    ${delivery[d].bowler}`
-  }
 
   wicketDetailsOfAllMatch(){
     let res = [];
