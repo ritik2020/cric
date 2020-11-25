@@ -13,6 +13,9 @@ export class TeamAnalysisComponent implements OnInit {
 
   ngOnInit(): void {
     this.battingOrder = this.battingOrderOfAllMatches();
+    // console.log(this.runScoredByBatsman("NCR Larkin",0));
+    // console.log(this.runScoredByBatsmenInAMatch(0));
+    console.log(this.runsScoredByBatsmenInAllMatches());
   }
 
 
@@ -164,5 +167,42 @@ export class TeamAnalysisComponent implements OnInit {
         return deliveries[i][del];
       }
     }
+  }
+  runScoredByBatsman(batsman,match){
+    let inning = this.getBattingInnings(match);
+    let inn = ["1st innings","2nd innings"];
+    let deliveries = this.matchesData[match].innings[inning][inn[inning]].deliveries;
+    
+    let run = 0;
+    let found = false;
+
+    for(let i=0;i<deliveries.length;i++){
+      let d = Object.keys(deliveries[i])[0];
+      if(deliveries[i][d].batsman===batsman){
+        run+=deliveries[i][d].runs.batsman;
+        found = true;
+      }
+    }
+    if(found){
+      return run;
+    }
+    return -1;
+  }
+
+  runScoredByBatsmenInAMatch(match){
+    let bo = this.battingOrderOfAMatch(match);
+    let res = new Map();
+    for(let i=0;i<bo.length;i++){
+      res.set(bo[i].batsman,this.runScoredByBatsman(bo[i].batsman,match));
+
+    }
+    return res;
+  }
+  runsScoredByBatsmenInAllMatches(){
+    let res = [];
+    for(let i=0;i<this.matchesData.length;i++){
+      res.push(this.runScoredByBatsmenInAMatch(i));
+    }
+    return res;
   }
 }
