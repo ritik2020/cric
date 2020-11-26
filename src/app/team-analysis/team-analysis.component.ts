@@ -16,27 +16,28 @@ export class TeamAnalysisComponent implements OnInit {
     this.battingOrder = this.battingOrderOfAllMatches();
     // console.log(this.wicketTakenByAllBowlersInAMatch(0));
     // console.log(this.matchesData[5]);
+    console.log(this.wicketDetailsOfAllMatch());
   }
 
 
   wicketDetailsOfAllMatch(){
     let res = [];
     for(let i=0; i<this.matchesData.length; i++){
-      if(this.matchesData[i].innings[0]["1st innings"].team === this.selectedTeam){
+      
         res.push(this.wicketsDetailOfAMatch(i));
-      }
-      if(this.matchesData[i].innings[1]["2nd innings"].team === this.selectedTeam){
-        res.push(this.wicketsDetailOfAMatch(i));
-      }
+      
     }
     return res;
   }
   
   wicketsDetailOfAMatch(match){
     let inning = this.getBowlingInnings(match);
+    var res = [];
+    if(inning===-1){
+      return res;
+    }
     var deliveries = this.matchesData[match].innings[inning][this.inningsNameArray[inning]].deliveries;
   
-    var res = [];
     for(let i=0; i<deliveries.length; i++){
       let d = Object.keys(deliveries[i])[0];
       let deliveryData =deliveries[i][d];
@@ -120,10 +121,16 @@ export class TeamAnalysisComponent implements OnInit {
   }
 
   getWinner(match){
+    if(this.matchesData[match].info.outcome.result!==undefined){
+      return "no result"
+    }
     return this.matchesData[match].info.outcome.winner;
   }
 
   getPlayerOfAMatch(match){
+    if(this.matchesData[match].info.outcome.result!==undefined){
+      return "no result"
+    }
     return this.matchesData[match].info.player_of_match;
   }
 
@@ -197,6 +204,8 @@ export class TeamAnalysisComponent implements OnInit {
   }
   runScoredByBatsman(batsman,match){
     let inning = this.getBattingInnings(match);
+    if(inning===-1) return -1;  //not played
+
     let inn = ["1st innings","2nd innings"];
     let deliveries = this.matchesData[match].innings[inning][inn[inning]].deliveries;
     
@@ -236,6 +245,9 @@ export class TeamAnalysisComponent implements OnInit {
   wicketsTakenByBowler(bowler,match){
     let m = this.matchesData[match];
     let inn = this.getBowlingInnings(match);
+    if(inn===-1){
+      return -1; // not played
+    }
     let wicket = 0;
     let deliveries = m.innings[inn][this.inningsNameArray[inn]].deliveries;
     for(let i=0;i<deliveries.length;i++){

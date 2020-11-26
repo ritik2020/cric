@@ -9,7 +9,7 @@ export class AppComponent implements OnInit {
   teamAllMatches = [];
   selectedTeam:string;
   ngOnInit(){
-    this.selectTeam("Hobart Hurricanes");
+    this.selectTeam("Sydney Sixers");
 
   }
 
